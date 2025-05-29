@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - CipherPuzzle</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.4);
+      text-align: center;
+      width: 340px;
+    }
+
+    h1 {
+      color: #00ffc3;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      color: #000;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #001f3f;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    a {
+      color: #00ffc3;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Register</h1>
+    <input id="name" type="text" placeholder="Full Name" required />
+    <input id="email" type="email" placeholder="Email" required />
+    <input id="password" type="password" placeholder="Password" required minlength="6" />
+    <input id="confirmPass" type="password" placeholder="Confirm Password" required minlength="6" />
+    <button id="registerBtn">Sign Up</button>
+    <div id="message"></div>
+    <p><a href="login.html">Already have an account? Log in</a></p>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import {
+      createUserWithEmailAndPassword,
+      sendEmailVerification
+    } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js';
+    import { doc, setDoc } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js';
+
+    const registerBtn = document.getElementById('registerBtn');
+    const msgEl = document.getElementById('message');
+
+    registerBtn.addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPass = document.getElementById('confirmPass').value;
+
+      msgEl.textContent = '';
+      msgEl.style.color = '#f33';
+
+      // Validation
+      if (!name || !email || !password || !confirmPass) {
+        msgEl.textContent = 'All fields are required.';
+        return;
+      }
+
+      if (password.length < 6) {
+        msgEl.textContent = 'Password must be at least 6 characters.';
+        return;
+      }
+
+      if (!/[A-Z]/.test(password)) {
+        msgEl.textContent = 'Password must contain at least one uppercase letter.';
+        return;
+      }
+
+      if (!/[a-z]/.test(password)) {
+        msgEl.textContent = 'Password must contain at least one lowercase letter.';
+        return;
+      }
+
+      if (password !== confirmPass) {
+        msgEl.textContent = 'Passwords do not match.';
+        return;
+      }
+
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(user);
+
+        await setDoc(doc(db, 'users', user.uid), {
+          name,
+          email,
+          createdAt: new Date().toISOString(),
+          role: 'user',
+          canPassLevel1: true,
+          canPassLevel2: false,
+          canPassLevel3: false
+        });
+
+        msgEl.style.color = '#0f0';
+        msgEl.textContent = 'Please check your email and verify your account...';
+
+        // Polling for email verification
+        const checkInterval = setInterval(async () => {
+          await user.reload();
+
+          if (user.emailVerified) {
+            clearInterval(checkInterval);
+            msgEl.textContent = 'Email verified! Registration complete. Redirecting…';
+            setTimeout(() => window.location.href = 'login.html', 2000);
+          }
+        }, 3000);
+
+      } catch (err) {
+        let cleanMsg;
+        switch (err.code) {
+          case 'auth/email-already-in-use':
+            cleanMsg = 'That email is already registered.';
+            break;
+          case 'auth/weak-password':
+            cleanMsg = 'Password must be at least 6 characters.';
+            break;
+          default:
+            cleanMsg = err.message
+              .replace(/^Firebase:\s*/i, '')
+              .replace(/\s*\(auth\/[^\)]+\)$/i, '');
+        }
+
+        msgEl.style.color = '#f33';
+        msgEl.textContent = cleanMsg;
+      }
+    });
+  </script>
+</body>
+</html>

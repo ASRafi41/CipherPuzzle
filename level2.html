@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Level 2 - Vernam Cipher</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+    }
+
+    .clue-image {
+      height: 260px;
+      width: 260px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #00ffc3;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    h1 {
+      color: #00ffc3;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 px #00ffc3;
+    }
+
+    label,
+    input,
+    button {
+      display: block;
+      margin: 10px auto;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    input {
+      padding: 10px;
+      width: 200px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 25px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+    }
+
+    #output {
+      font-size: 1.2rem;
+      color: #00ffc3;
+      margin-top: 20px;
+    }
+
+    #congrats {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+    }
+
+    #congrats-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #00ffc3;
+      color: #1b1b1b;
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+      animation: slideFade 0.6s ease-out;
+    }
+
+    #congrats-content .trophy {
+      font-size: 4rem;
+      animation: pop 1.2s infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes slideFade {
+      from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img id="clueImage" class="clue-image" src="" alt="Random Clue">
+    <h1>Level 2: Vernam Cipher</h1>
+    <p><strong>Encrypted Text:</strong> <span id="cipherText">ABCDE</span></p>
+
+    <label for="key">Look carefully at the image for the clue, then enter the key:</label>
+    <input type="text" id="key" maxlength="5" placeholder="e.g. RPMCC">
+    <button id="decryptBtn">Decrypt</button>
+
+    <div id="output">???</div>
+
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px;">🏠 Go to Home</button>
+
+  </div>
+
+  <div id="congrats">
+    <div id="congrats-content">
+      <div class="trophy">🏆</div>
+      <h2>Congratulations!</h2>
+      <p>You’ve cracked the cipher!</p>
+      <p>Redirecting to Home...</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js';
+
+    const totalImages = 10;
+    const vernamKeys = [
+      null,
+      "RPMCC", "ESAHM", "MTDFA", "JSTTB", "BTNIO",
+      "OHTRI", "TCRTE", "CTLPM", "TTIDJ", "BTFWA"
+    ];
+    const plaintexts = [
+      "HELLO", "WORLD", "CODES", "SHIFT", "CLUES",
+      "QUEST", "CRYPT", "MAGIC", "THINK", "TRACE"
+    ];
+
+    let selectedIndex, selectedKey, selectedPlain;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectedIndex = Math.floor(Math.random() * totalImages) + 1;
+      selectedKey = vernamKeys[selectedIndex];
+      selectedPlain = plaintexts[Math.floor(Math.random() * plaintexts.length)];
+
+      // generate cipher
+      let cipher = '';
+      for (let i = 0; i < selectedKey.length; i++) {
+        const pVal = selectedPlain.charCodeAt(i) - 65;
+        const kVal = selectedKey.charCodeAt(i) - 65;
+        cipher += String.fromCharCode(((pVal + kVal) % 26) + 65);
+      }
+      document.getElementById('cipherText').textContent = cipher;
+
+      // set clue image
+      const img = document.getElementById('clueImage');
+      img.src = `BookSelfImages/image${selectedIndex}.jpg`;
+      img.alt = `Clue Image ${selectedIndex}`;
+    });
+
+    document.getElementById('decryptBtn').addEventListener('click', async () => {
+      playClickSound();
+      const userKey = document.getElementById('key').value.toUpperCase();
+      const cipher = document.getElementById('cipherText').textContent;
+      const output = document.getElementById('output');
+
+      if (userKey.length !== cipher.length) {
+        output.textContent = `❌ Key must be ${cipher.length} letters!`;
+        return;
+      }
+      if (userKey !== selectedKey) {
+        output.textContent = '❌ Incorrect key – try again!';
+        return;
+      }
+
+      // decrypt
+      let plaintext = '';
+      for (let i = 0; i < cipher.length; i++) {
+        const cVal = cipher.charCodeAt(i) - 65;
+        const kVal = selectedKey.charCodeAt(i) - 65;
+        plaintext += String.fromCharCode(((cVal - kVal + 26) % 26) + 65);
+      }
+      output.textContent = plaintext;
+      playSuccessSound();
+      document.getElementById('congrats').style.display = 'block';
+
+      // update Firestore and redirect
+      setTimeout(async () => {
+        const user = auth.currentUser;
+        if (user) {
+          await updateDoc(doc(db, 'users', user.uid), { canPassLevel3: true });
+        }
+        window.location.href = 'index.html';
+      }, 2500);
+    });
+  </script>
+
+  <!-- for background music -->
+  <audio id="bg-music" loop>
+    <source src="sounds/background.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const bgMusic = document.getElementById("bg-music");
+
+    if (localStorage.getItem("bgMusicAllowed") === "true") {
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }
+
+    document.body.addEventListener("click", () => {
+      if (!bgMusic.paused) return;
+      localStorage.setItem("bgMusicAllowed", "true");
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }, { once: true });
+
+    // Handle tab visibility to pause/resume music
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        bgMusic.pause();
+      } else {
+        if (localStorage.getItem("bgMusicAllowed") === "true" && bgMusic.paused) {
+          bgMusic.play().catch(() => { });
+        }
+      }
+    });
+  </script>
+
+
+  <!-- for background music -->
+
+  <!-- for click and success sound -->
+  <audio id="click-sound" src="sounds/click.wav" preload="auto"></audio>
+  <audio id="success-sound" src="sounds/success.wav" preload="auto"></audio>
+  <script>
+    const clickSound = document.getElementById("click-sound");
+    const successSound = document.getElementById("success-sound");
+
+    function playClickSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function playSuccessSound() {
+      successSound.currentTime = 0;
+      successSound.play();
+    }
+  </script>
+
+</body>
+
+</html>

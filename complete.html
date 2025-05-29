@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Congratulations!</title>
+  <link rel="icon" type="image/png" href="favicon.png"> 
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .container {
+      padding: 40px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #00ffc3;
+      text-shadow: 0 0 px #00ffc3, 0 0 px #00ffc3;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #ccc;
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #001f3f;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 Congratulations!</h1>
+    <p>You’ve successfully completed all levels of <strong>CipherPuzzle</strong>.<br>You've proven your cryptographic skills! 🧠🔐</p>
+    <button onclick="window.location.href='index.html'">🔁 Play Again</button>
+  </div>
+<!-- for background music -->
+<audio id="bg-music" loop>
+  <source src="sounds/background.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const bgMusic = document.getElementById("bg-music");
+
+  if (localStorage.getItem("bgMusicAllowed") === "true") {
+    bgMusic.volume = 0.3;
+    bgMusic.play().catch(() => {});
+  }
+
+  document.body.addEventListener("click", () => {
+    if (!bgMusic.paused) return;
+    localStorage.setItem("bgMusicAllowed", "true");
+    bgMusic.volume = 0.3;
+    bgMusic.play().catch(() => {});
+  }, { once: true });
+
+  // Handle tab visibility to pause/resume music
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      bgMusic.pause();
+    } else {
+      if (localStorage.getItem("bgMusicAllowed") === "true" && bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+      }
+    }
+  });
+</script>
+
+
+<!-- for background music -->
+
+<!-- for click and success sound -->
+<audio id="click-sound" src="sounds/click.wav" preload="auto"></audio>
+<audio id="success-sound" src="sounds/success.wav" preload="auto"></audio>
+<script>
+  const clickSound = document.getElementById("click-sound");
+  const successSound = document.getElementById("success-sound");
+  playSuccessSound();
+  function playClickSound() {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+
+  function playSuccessSound() {
+    successSound.currentTime = 0;
+    successSound.play();
+  }
+</script>
+
+</body>
+</html>

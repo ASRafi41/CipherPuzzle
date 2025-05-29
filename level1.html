@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Level 1 - Caesar Cipher</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+    }
+
+    .wall-clock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 20px;
+      width: 200px;
+      height: 200px;
+    }
+
+    .wall-clock img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #00ffc3;
+    }
+
+    h1 {
+      color: #00ffc3;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 px #00ffc3;
+    }
+
+    label,
+    input,
+    button {
+      display: block;
+      margin: 10px auto;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    input {
+      padding: 10px;
+      width: 200px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 25px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+    }
+
+    #output {
+      font-size: 1.2rem;
+      color: #00ffc3;
+      margin-top: 20px;
+    }
+
+    #congrats {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+    }
+
+    #congrats-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #00ffc3;
+      color: #1b1b1b;
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+      animation: slideFade 0.6s ease-out;
+    }
+
+    #congrats-content .trophy {
+      font-size: 4rem;
+      animation: pop 1.2s infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes slideFade {
+      from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="wall-clock">
+      <img src="Clock images/hr1.png" alt="Clock showing hour 1" id="clockImg">
+    </div>
+
+    <h1>Level 1: Caesar Cipher</h1>
+
+    <p><strong>Encrypted Text:</strong> <span id="encrypted-text">?????</span></p>
+
+    <label for="key">Look carefully at the clock to find the hidden key, then enter it:</label>
+    <input type="number" id="key" min="1" max="24">
+    <button id="decryptBtn">Decrypt</button>
+
+    <div id="output">???</div>
+
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px;">🏠 Go to Home</button>
+
+  </div>
+
+  <div id="congrats">
+    <div id="congrats-content">
+      <div class="trophy">🏆</div>
+      <h2>Congratulations!</h2>
+      <p>You’ve cracked the cipher!</p>
+      <p>The message was <span id="revealed-message"></span>.</p>
+      <p>Redirecting to Home...</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js';
+
+    const plaintexts = [
+      "HELLO", "SECRET", "CAESAR", "CRYPT", "PUZZLE",
+      "RIDDLE", "ENOIGM", "MYSTER", "CLUEZ", "QUEST",
+      "CODEX", "SHIFT", "ALPHA", "DELTA", "SIGMA",
+      "OMEGA", "GAMMA", "TAU", "ABOUT", "ABOVE",
+      "AGATE", "ACORN", "NOTES", "RESIN", "TARES", "SENOR"
+    ];
+
+    const clockFilenames = [
+      null,
+      "hr1.png", "hr2.png", "hr3.png", "hr4.jpg", "hr5.jpg",
+      "hr6.jpg", "hr7.jpg", "hr8.jpg", "hr9.jpg", "hr10.jpg",
+      "hr11.jpg", "hr12.jpg", "hr13.jpg", "hr14.jpg", "hr15.jpg",
+      "hr16.jpg", "hr17.jpg", "hr18.jpg", "hr19.png", "hr20.png",
+      "hr21.png", "hr22.png", "hr23.png", "hr24.jpg"
+    ];
+
+    const clockImages = clockFilenames.map(fn => fn ? `Clock images/${fn}` : null);
+
+    let key, plaintext, cipher;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      key = Math.floor(Math.random() * 24) + 1;
+      plaintext = plaintexts[Math.floor(Math.random() * plaintexts.length)];
+      cipher = [...plaintext].map(ch => {
+        const code = ch.charCodeAt(0) - 65;
+        return String.fromCharCode(((code + key) % 26) + 65);
+      }).join('');
+
+      document.getElementById('encrypted-text').textContent = cipher;
+      const img = document.getElementById('clockImg');
+      img.src = clockImages[key];
+      img.alt = `Clock showing hour ${key}`;
+    });
+
+    document.getElementById('decryptBtn').addEventListener('click', async () => {
+      playClickSound();
+      const userKey = parseInt(document.getElementById('key').value, 10);
+      const outputEl = document.getElementById('output');
+      if (isNaN(userKey) || userKey < 1 || userKey > 24) {
+        outputEl.textContent = 'Enter a valid key between 1 and 24.';
+        return;
+      }
+      if (userKey !== key) {
+        outputEl.textContent = 'Incorrect key – try again!';
+        return;
+      }
+      const result = [...cipher].map(ch => {
+        const code = ch.charCodeAt(0) - 65;
+        return String.fromCharCode(((code - userKey + 26) % 26) + 65);
+      }).join('');
+      outputEl.textContent = result;
+      document.getElementById('revealed-message').textContent = `“${plaintext}”`;
+      playSuccessSound();
+      document.getElementById('congrats').style.display = 'block';
+
+      setTimeout(async () => {
+        const user = auth.currentUser;
+        if (user) {
+          await updateDoc(doc(db, 'users', user.uid), { canPassLevel2: true });
+        }
+        window.location.href = 'index.html';
+      }, 2500);
+    });
+  </script>
+  <!-- for background music -->
+  <audio id="bg-music" loop>
+    <source src="sounds/background.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const bgMusic = document.getElementById("bg-music");
+
+    if (localStorage.getItem("bgMusicAllowed") === "true") {
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }
+
+    document.body.addEventListener("click", () => {
+      if (!bgMusic.paused) return;
+      localStorage.setItem("bgMusicAllowed", "true");
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }, { once: true });
+
+    // Handle tab visibility to pause/resume music
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        bgMusic.pause();
+      } else {
+        if (localStorage.getItem("bgMusicAllowed") === "true" && bgMusic.paused) {
+          bgMusic.play().catch(() => { });
+        }
+      }
+    });
+  </script>
+
+
+  <!-- for background music -->
+
+  <!-- for click and success sound -->
+  <audio id="click-sound" src="sounds/click.wav" preload="auto"></audio>
+  <audio id="success-sound" src="sounds/success.wav" preload="auto"></audio>
+  <script>
+    const clickSound = document.getElementById("click-sound");
+    const successSound = document.getElementById("success-sound");
+
+    function playClickSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function playSuccessSound() {
+      successSound.currentTime = 0;
+      successSound.play();
+    }
+  </script>
+</body>
+
+</html>

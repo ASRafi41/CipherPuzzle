@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CipherPuzzle</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    /* Splash screen */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+
+    .splash-content {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    .splash-content h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: #00ffc3;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #00ffc3;
+    }
+
+    .splash-content p {
+      font-family: 'Orbitron', sans-serif;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+
+    .splash-content button {
+      padding: 12px 30px;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #001f3f;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .splash-content button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Splash screen ends here*/
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.4);
+      text-align: center;
+      width: 320px;
+    }
+
+    h1 {
+      color: #00ffc3;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      color: #000;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #001f3f;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    a {
+      color: #00ffc3;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="loginBtn">Log In</button>
+    <div id="message"></div>
+    <p><a href="registration.html">Don't have an account? Register</a></p>
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js';
+
+    const loginBtn = document.getElementById('loginBtn');
+    const messageEl = document.getElementById('message');
+
+    loginBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      messageEl.textContent = '';
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        messageEl.style.color = '#0f0';
+        messageEl.textContent = 'Login successful! Redirecting…';
+        setTimeout(() => window.location.href = 'index.html', 1000);
+      } catch (err) {
+        // 1) Get the raw Firebase error message
+        const raw = err.message;
+        // 2) Remove the "Firebase: " prefix
+        // 3) Remove any trailing " (auth/…)" code
+        const clean = raw
+          .replace(/^Firebase:\s*/i, '')                           // strip "Firebase: "
+          .replace(/\s*\(auth\/[^\)]+\)$/i, '');                 // strip " (auth/…)"
+        messageEl.style.color = '#f33';
+        messageEl.textContent = clean;
+      }
+    });
+  </script>
+
+</body>
+</html>

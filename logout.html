@@ -1,0 +1,84 @@
+<!-- logout.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CipherPuzzle - Logout</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: radial-gradient(circle at center, #141e30, #243b55);
+      color: #00ffc3;
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+    }
+
+    .message-box {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border: 3px solid #00ffc3;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.5);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
+      color: #001f3f;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="message-box">
+    <h1>Logging out...</h1>
+    <p>You have been successfully logged out.</p>
+    <button onclick="goHome()">Back to Login</button>
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { signOut } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js';
+
+    async function doLogout() {
+      try {
+        // Firebase sign-out
+        await signOut(auth);
+      } catch (e) {
+        console.warn('Error signing out:', e);
+      }
+      // Clear local/session storage
+      sessionStorage.clear();
+      localStorage.removeItem('user');
+    }
+
+    function goHome() {
+      window.location.href = 'index.html';
+    }
+
+    // Perform logout then redirect
+    doLogout().then(() => {
+      setTimeout(goHome, 2000);
+    });
+  </script>
+</body>
+</html>

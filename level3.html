@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Level 3 - Hill Cipher (Encryption)</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+    }
+
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px auto;
+      width: 360px;
+    }
+
+    .cell {
+      background-color: #fef3d5;
+      color: #3a2e1d;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      border: 2px solid #c0a060;
+    }
+
+    h1 {
+      color: #00ffc3;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 px #00ffc3;
+    }
+
+    label,
+    input,
+    button {
+      display: block;
+      margin: 10px auto;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    input {
+      padding: 10px;
+      width: 100px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+      background-color: #fef3d5;
+      color: #3a2e1d;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #e2c290, #d8aa63);
+      color: #2f1d00;
+      border: 2px solid #8c6d3f;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #d8aa63, #e2c290);
+    }
+
+    #output {
+      font-size: 1.2rem;
+      color: #00ffc3;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Level 3: Hill Cipher</h1>
+    <p><strong>Clue:</strong> Lowest sum? That’s your KEY.</p>
+
+    <!-- Clue Matrix Container -->
+    <div class="puzzle-grid" id="clue-grid"></div>
+
+    <p><strong>Plain Text:</strong> <span id="plaintext-display">????</span></p>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 220px; margin: 10px auto;">
+      <input id="m00" type="number" placeholder="A00" style="width: 100px;">
+      <input id="m01" type="number" placeholder="A01" style="width: 100px;">
+      <input id="m10" type="number" placeholder="A10" style="width: 100px;">
+      <input id="m11" type="number" placeholder="A11" style="width: 100px;">
+    </div>
+
+    <button onclick="encryptHill(); playClickSound()">Encrypt</button>
+
+    <div id="output">???</div>
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px;">🏠 Go to Home</button>
+
+  </div>
+
+  <script>
+    // Holds the current random plaintext
+    let currentPlaintext = "";
+
+    // Generate a 4×4 grid of random 0–25 numbers
+    function generateRandomMatrix() {
+      const grid = document.getElementById("clue-grid");
+      grid.innerHTML = "";
+      for (let i = 0; i < 16; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = Math.floor(Math.random() * 26);
+        grid.appendChild(cell);
+      }
+    }
+
+    // Generate an uppercase A–Z string of given length
+    function generateRandomPlaintext(length = 4) {
+      let txt = "";
+      for (let i = 0; i < length; i++) {
+        txt += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      }
+      return txt;
+    }
+
+    // Encrypt the currentPlaintext in two 2‑letter blocks
+    function encryptHill() {
+      const key = [
+        parseInt(document.getElementById("m00").value),
+        parseInt(document.getElementById("m01").value),
+        parseInt(document.getElementById("m10").value),
+        parseInt(document.getElementById("m11").value)
+      ];
+
+      if (key.some(isNaN)) {
+        document.getElementById("output").textContent = "❌ Fill all 4 matrix fields.";
+        return;
+      }
+
+      const grid = Array.from(document.getElementById("clue-grid").children).map(cell => parseInt(cell.textContent));
+
+      const rows = [
+        [grid[0], grid[1], grid[2], grid[3]],
+        [grid[4], grid[5], grid[6], grid[7]],
+        [grid[8], grid[9], grid[10], grid[11]],
+        [grid[12], grid[13], grid[14], grid[15]]
+      ];
+
+      const cols = [
+        [grid[0], grid[4], grid[8], grid[12]],
+        [grid[1], grid[5], grid[9], grid[13]],
+        [grid[2], grid[6], grid[10], grid[14]],
+        [grid[3], grid[7], grid[11], grid[15]]
+      ];
+
+      const allKeys = [];
+      for (let i = 0; i < 4; i++) {
+        allKeys.push([rows[i][0], rows[i][1], rows[i][2], rows[i][3]]);
+        allKeys.push([cols[i][0], cols[i][1], cols[i][2], cols[i][3]]);
+      }
+
+      const keyStr = key.join(',');
+      const validKeys = allKeys.map(k => k.join(','));
+      const keyIsValid = validKeys.includes(keyStr);
+
+      const rowColSums = [...rows, ...cols].map(arr => arr.reduce((a, b) => a + b));
+      const minIndex = rowColSums.indexOf(Math.min(...rowColSums));
+      const correctKey = [...rows, ...cols][minIndex];
+      const correctKeyStr = correctKey.join(',');
+
+      // Convert A–Z to 0–25
+      const vector = currentPlaintext.split('').map(c => c.charCodeAt(0) - 65);
+
+      let cipher = "";
+      for (let i = 0; i < 4; i += 2) {
+        const r0 = (key[0] * vector[i] + key[1] * vector[i + 1]) % 26;
+        const r1 = (key[2] * vector[i] + key[3] * vector[i + 1]) % 26;
+        cipher += String.fromCharCode(r0 + 65) + String.fromCharCode(r1 + 65);
+      }
+
+      if (!keyIsValid) {
+        document.getElementById("output").textContent = "❌ Incorrect key. All value must be from the matrix";
+      } else if (keyStr === correctKeyStr) {
+        document.getElementById("output").textContent = "✅ Correct key! Redirecting...";
+        setTimeout(() => {
+          playSuccessSound();
+          window.location.href = "complete.html";
+        }, 1500);
+      } else {
+        document.getElementById("output").textContent = cipher + "\n❌ Incorrect key. Try again.";
+
+      }
+    }
+
+    // On load: set up matrix, random plaintext, and display it
+    window.onload = function () {
+      generateRandomMatrix();
+      currentPlaintext = generateRandomPlaintext(4);
+      document.getElementById("plaintext-display").textContent = currentPlaintext;
+    };
+  </script>
+
+  <!-- for background music -->
+  <audio id="bg-music" loop>
+    <source src="sounds/background.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const bgMusic = document.getElementById("bg-music");
+
+    if (localStorage.getItem("bgMusicAllowed") === "true") {
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }
+
+    document.body.addEventListener("click", () => {
+      if (!bgMusic.paused) return;
+      localStorage.setItem("bgMusicAllowed", "true");
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }, { once: true });
+
+    // Handle tab visibility to pause/resume music
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        bgMusic.pause();
+      } else {
+        if (localStorage.getItem("bgMusicAllowed") === "true" && bgMusic.paused) {
+          bgMusic.play().catch(() => { });
+        }
+      }
+    });
+  </script>
+
+
+  <!-- for background music -->
+
+  <!-- for click and success sound -->
+  <audio id="click-sound" src="sounds/click.wav" preload="auto"></audio>
+  <audio id="success-sound" src="sounds/success.wav" preload="auto"></audio>
+  <script>
+    const clickSound = document.getElementById("click-sound");
+    const successSound = document.getElementById("success-sound");
+
+    function playClickSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function playSuccessSound() {
+      successSound.currentTime = 0;
+      successSound.play();
+    }
+  </script>
+
+</body>
+</html>

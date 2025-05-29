@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CipherPuzzle - Home</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap');
+
+    /* Splash screen */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+
+    .splash-content {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border: 2px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    .splash-content h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: #00ffc3;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 px #00ffc3;
+    }
+
+    .splash-content p {
+      font-family: 'Orbitron', sans-serif;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+
+    .splash-content button {
+      padding: 12px 30px;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #001f3f;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .splash-content button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Splash screen ends here*/
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #141e30, #243b55);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://media.giphy.com/media/l0HlMZ5j9Qqjh5yus/giphy.gif') center/cover no-repeat;
+      opacity: 0.03;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      display: none;
+    }
+
+    .container {
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #00ffc3;
+      text-shadow: 0 0 px #00ffc3, 0 0 px #00ffc3;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #ccc;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .levels {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .level {
+      background: linear-gradient(to bottom, #22304f, #1b263b);
+      border: 3px dashed #00ffc3;
+      border-radius: 15px;
+      padding: 25px;
+      width: 220px;
+      box-shadow: 0 0 15px rgba(0, 255, 195, 0.2);
+      transition: all 0.3s ease;
+      transform: perspective(1000px) rotateX(0deg);
+    }
+
+    .level:hover {
+      transform: scale(1.07) rotateX(4deg);
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.6);
+    }
+
+    .level h2 {
+      margin-top: 0;
+      color: #00ffc3;
+      font-size: 1.4rem;
+    }
+
+    .level p {
+      color: #aaa;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #00ffc3, #00d1a0);
+      color: #001f3f;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:disabled {
+      background-color: #333;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    button:hover:enabled {
+      background: linear-gradient(90deg, #00d1a0, #00ffc3);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body onload="loadLevels()">
+  <!-- Splash screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <h1>CipherPuzzle</h1>
+      <p>🧠 Crack the code. Escape the challenge.</p>
+      <button id="start-btn">Start Game</button>
+    </div>
+  </div>
+  <!-- Splash screen ends here-->
+
+  <!-- Profile Button -->
+  <div id="profile-btn" style="position: absolute; top: 30px; right: 30px; z-index: 1000;">
+    <button onclick="goToProfile()">👤 Profile</button>
+  </div>
+  <!-- Profile Button ends here-->
+
+  <div class="container">
+    <h1>CipherPuzzle</h1>
+    <p>🧠 Crack the code. Escape the challenge.</p>
+    <div class="levels">
+      <div class="level">
+        <h2>Level 1</h2>
+        <p>Caesar Cipher</p>
+        <button id="level1-btn" onclick="startLevel(1); playClickSound()">Start</button>
+      </div>
+
+      <div class="level">
+        <h2>Level 2</h2>
+        <p>Vernam Cipher</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button id="level2-btn" disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 3</h2>
+        <p>Hill Cipher</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button id="level3-btn" disabled>Locked</button>
+        </div>
+      </div>
+
+      <!-- Future Levels -->
+      <div class="level">
+        <h2>Level 4</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 5</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 6</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 7</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 8</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 9</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 10</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 11</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+      <div class="level">
+        <h2>Level 12</h2>
+        <p>Coming Soon</p>
+        <div onclick="playClickSound()" style="display: inline-block;">
+          <button disabled>Locked</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/11.7B.3/firebase-firestore.js';
+
+    // Navigate to the chosen level
+    function startLevel(n) {
+      const btn = document.getElementById(`level${n}-btn`);
+      btn.textContent = 'Loading...';
+      btn.disabled = true;
+      setTimeout(() => window.location.href = `level${n}.html`, 800);
+    }
+
+    // Load Firestore flags and enable buttons
+    async function loadLevels() {
+      onAuthStateChanged(auth, async user => {
+        if (!user) return window.location.href = 'login.html';
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists()) throw new Error('User document is missing');
+        const { canPassLevel1, canPassLevel2, canPassLevel3 } = snap.data();
+
+        const btn1 = document.getElementById('level1-btn');
+        const btn2 = document.getElementById('level2-btn');
+        const btn3 = document.getElementById('level3-btn');
+
+        btn1.disabled = !canPassLevel1;
+        btn2.disabled = !canPassLevel2;
+        btn3.disabled = !canPassLevel3;
+
+        btn1.textContent = canPassLevel1 ? 'Start' : 'Locked';
+        btn2.textContent = canPassLevel2 ? 'Start' : 'Locked';
+        btn3.textContent = canPassLevel3 ? 'Start' : 'Locked';
+      });
+    }
+
+    // Wire up events after DOM is ready
+    window.addEventListener('DOMContentLoaded', () => {
+      loadLevels();
+
+      document.getElementById('level1-btn')
+        .addEventListener('click', () => startLevel(1));
+      document.getElementById('level2-btn')
+        .addEventListener('click', () => startLevel(2));
+      document.getElementById('level3-btn')
+        .addEventListener('click', () => startLevel(3));
+    });
+  </script>
+
+  <!-- for background music -->
+  <audio id="bg-music" loop>
+    <source src="sounds/background.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const bgMusic = document.getElementById("bg-music");
+
+    if (localStorage.getItem("bgMusicAllowed") === "true") {
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }
+
+    document.body.addEventListener("click", () => {
+      if (!bgMusic.paused) return;
+      localStorage.setItem("bgMusicAllowed", "true");
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }, { once: true });
+
+    // Handle tab visibility to pause/resume music
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        bgMusic.pause();
+      } else {
+        if (localStorage.getItem("bgMusicAllowed") === "true" && bgMusic.paused) {
+          bgMusic.play().catch(() => { });
+        }
+      }
+    });
+  </script>
+
+  <!-- for background music -->
+
+  <!-- for click and success sound -->
+  <audio id="click-sound" src="sounds/click.wav" preload="auto"></audio>
+  <audio id="success-sound" src="sounds/success.wav" preload="auto"></audio>
+  <script>
+    const clickSound = document.getElementById("click-sound");
+    const successSound = document.getElementById("success-sound");
+
+    function playClickSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function playSuccessSound() {
+      successSound.currentTime = 0;
+      successSound.play();
+    }
+  </script>
+  <!-- splash screen starts here -->
+  <script>
+    const splash = document.getElementById("splash-screen");
+    const startBtn = document.getElementById("start-btn");
+
+    startBtn.addEventListener("click", () => {
+      splash.style.display = "none";
+      localStorage.setItem("bgMusicAllowed", "true");
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    });
+
+    // Auto skip splash if already allowed
+    if (localStorage.getItem("bgMusicAllowed") === "true") {
+      splash.style.display = "none";
+      bgMusic.volume = 0.3;
+      bgMusic.play().catch(() => { });
+    }
+  </script>
+  <!-- splash screen starts here -->
+
+  <!-- profile button -->
+  <script>
+    function goToProfile() {
+      window.location.href = 'profile.html';
+    }
+  </script>
+  <!-- profile button ends-->
+
+</body>
+
+</html>
