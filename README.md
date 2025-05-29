@@ -70,7 +70,7 @@
 ![Levels](screenshots/homePage.jpg)
 
 ### 👤 Profile Page
-![Profile](screenshots/profilePage.png)
+![Profile](screenshots/profilePage.jpg)
 
 ---
 
