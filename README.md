@@ -1,56 +1,62 @@
 # 🔐 CipherPuzzle
 
-**CipherPuzzle** is a web-based puzzle game that challenges players to solve cipher-based puzzles across multiple levels. Built with HTML, CSS, and JavaScript, it leverages Firebase for authentication and Firestore for data storage.
+**CipherPuzzle** is a retro-inspired, browser-based puzzle game that challenges players with cipher, clock, and bookshelf puzzles across multiple levels. Built using HTML, CSS, JavaScript, and Firebase, it provides a gamified platform for logic, codebreaking, and pattern recognition.
 
-🌐 Live Demo: [https://cipherpuzzle.netlify.app/](https://cipherpuzzle.netlify.app/)
+🌐 **Live Demo:** [https://cipherpuzzle.netlify.app/](https://cipherpuzzle.netlify.app/)
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
-cipherpuzzle/
-├── firebase-config.js
-├── index.html
-├── login.html
-├── logout.html
-├── profile.html
-├── registration.html
-├── level1.html
-├── level2.html
-├── level3.html
-├── profile_icon.png
-└── README.md
+.
+├── BookSelfImages/        # Images for Level 2 bookshelf puzzle
+├── Clock images/         # Images for Level 1 clock puzzle
+├── sounds/               # Audio assets and sound effects
+├── index.html            # Home/Landing page
+├── login.html            # User login screen
+├── registration.html     # User registration form
+├── profile.html          # User profile (displays name & level completed)
+├── logout.html           # Logs out and ends session
+├── level1.html           # Caesar cipher challenge
+├── level2.html           # Vernam cipher challenge
+├── level3.html           # Hill cipher challenge
+├── complete.html         # Game completion congratulations
+├── firebase-config.js    # Firebase initialization (Auth & Firestore)
+├── style.css             # Global/shared styles (if used)
+├── profile_icon.png      # Default profile picture
+└── README.md             # Project documentation
 ```
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-* User Registration and Authentication (Firebase Auth)
-* User Profile with Display Name and Profile Picture
-* Level Progression Tracking (Firestore)
-* Responsive Design with Retro Aesthetics
-* Hosted on Netlify for Fast and Reliable Access
+* **User Authentication:** Email/password signup & login with Firebase Auth
+* **Progress Tracking:** Firestore stores user progress (levels unlocked)
+* **Dynamic Puzzles:** Three cipher levels (Caesar, Vernam, Hill) with media clues
+* **Profile & Logout:** Personalized profile page and clean session sign-out
+* **Retro Aesthetic:** 8-bit fonts, neon glow effects, immersive backgrounds
+* **Hosted on Netlify:** Fast deployment and global CDN
 
 ---
 
-## 🛠️ Setup Instructions
+## 🛠️ Setup & Installation
 
-1. **Clone the Repository**
+1. **Clone Repository**
 
    ```bash
    git clone https://github.com/yourusername/cipherpuzzle.git
    cd cipherpuzzle
    ```
 
-2. **Firebase Configuration**
+2. **Configure Firebase**
 
-   * Create a Firebase project at [https://console.firebase.google.com/](https://console.firebase.google.com/).
-   * Enable **Authentication** (Email/Password) and **Firestore Database**.
-   * Replace the placeholder Firebase configuration in `firebase-config.js` with your project's credentials:
+   * Create a Firebase project at [https://console.firebase.google.com/](https://console.firebase.google.com/)
+   * Enable **Authentication** (Email/Password) and **Firestore Database**
+   * Replace credentials in `firebase-config.js`:
 
-     ```javascript
+     ```js
      const firebaseConfig = {
        apiKey: "YOUR_API_KEY",
        authDomain: "YOUR_AUTH_DOMAIN",
@@ -64,37 +70,13 @@ cipherpuzzle/
 
 3. **Run Locally**
 
-   You can use any local development server. For example, with Python:
+   Serve files via a static server. Example using Python 3:
 
    ```bash
-   # Python 3.x
    python -m http.server 8000
    ```
 
-   Then, navigate to `http://localhost:8000` in your browser.
-
----
-
-## 📦 Deployment on Netlify
-
-To deploy the project on Netlify:
-
-1. **Create a New Site**
-
-   * Log in to [Netlify](https://app.netlify.com/) and click on **"Add new site"**.
-   * Choose **"Import an existing project"** and connect your GitHub repository.
-
-2. **Configure Build Settings**
-
-   * **Build Command**: (leave blank if not using a build tool)
-   * **Publish Directory**: `/`
-
-3. **Deploy**
-
-   * Click **"Deploy Site"**.
-   * Once deployed, your site will be live at `https://your-site-name.netlify.app/`.
-
-For more details, refer to Netlify's official documentation: [Create deploys | Netlify Docs](https://docs.netlify.com/site-deploys/create-deploys/)
+   Open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ---
 
