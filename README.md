@@ -9,7 +9,6 @@
 ## 📁 Project Structure
 
 ```
-.
 ├── BookSelfImages/        # Images for Level 2 bookshelf puzzle
 ├── Clock images/         # Images for Level 1 clock puzzle
 ├── sounds/               # Audio assets and sound effects
