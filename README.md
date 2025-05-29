@@ -16,9 +16,9 @@ cipherpuzzle/
 ├── logout.html
 ├── profile.html
 ├── registration.html
-├── level1
-├── level2
-├── level3
+├── level1.html
+├── level2.html
+├── level3.html
 ├── profile_icon.png
 └── README.md
 ```
