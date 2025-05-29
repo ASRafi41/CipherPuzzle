@@ -40,6 +40,40 @@
 
 ---
 
+## 🔧 Technologies Used
+
+- HTML5 / CSS3  
+- JavaScript (Vanilla)  
+- Firebase Authentication & Firestore  
+- Netlify for deployment  
+
+---
+
+## 🚀 How to Play
+
+1. Log in using your credentials  
+2. Start with Level 1 (Caesar Cipher)  
+3. Solve puzzles using clues  
+4. Progress to higher levels as they unlock  
+
+---
+
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login](screenshots/login.jpg)
+
+### 📝 Register Page
+![Register](screenshots/register.jpg)
+
+### 🕹 Game Levels
+![Levels](screenshots/homePage.jpg)
+
+### 👤 Profile Page
+![Profile](screenshots/profilePage.png)
+
+---
+
 ## 🛠️ Setup & Installation
 
 1. **Clone Repository**
@@ -79,9 +113,6 @@
 
 ---
 
-## 👥 Contributors
+## 🤝 Special Thanks
 
-* Abu Sufian Rafi
-* Abid Hussan
-* Numan Ahmed Rony
-
+Contribution of my teammates *Abid Hussan* and *Noman Ahmed Rony*.
