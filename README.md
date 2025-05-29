@@ -96,14 +96,6 @@ For more details, refer to Netlify's official documentation: [Create deploys | N
 
 ---
 
-## 📸 Logo
-
-![CipherPuzzle Logo](./profile_icon.png)
-
-*The logo represents a puzzle-lock icon, symbolizing the essence of CipherPuzzle.*
-
----
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
