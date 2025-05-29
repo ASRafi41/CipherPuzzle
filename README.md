@@ -94,8 +94,3 @@ To deploy the project on Netlify:
 
 For more details, refer to Netlify's official documentation: [Create deploys | Netlify Docs](https://docs.netlify.com/site-deploys/create-deploys/)
 
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
