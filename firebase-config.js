@@ -4,13 +4,13 @@ import { getAuth } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-auth
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey: "", // API not connected
-  authDomain: "cipherpuzzle.firebaseapp.com",
-  projectId: "cipherpuzzle",
-  storageBucket: "cipherpuzzle.firebasestorage.app",
-  messagingSenderId: "472791209438",
-  appId: "1:472791209438:web:518b112184702d60d7394f",
-  measurementId: "G-94434C9VKB"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
 };
 
 const app = initializeApp(firebaseConfig);
